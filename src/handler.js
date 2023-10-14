@@ -1,15 +1,36 @@
 const { nanoid } = require('nanoid')
 const books = require('./books')
 
-const getAllBooksHandler = () => ({
-    status: 'success',
-    data: { 
-        books: books.map(book => {
-            const { id, name, publisher } = book
-            return { id, name, publisher }
-        }) 
+const getAllBooksHandler = (request, h) => {
+    const { name, reading, finished } = request.query
+
+    var bookBasket = books
+
+    if (name !== undefined) {
+        bookBasket = bookBasket.filter((b, _) => b.name.toLowerCase().includes(name.toLowerCase()))
     }
-})
+
+    if (reading === '1' || reading === '0') {
+        bookBasket = bookBasket.filter(b => b.reading == parseInt(reading));
+    }
+    
+    if (finished === '1' || finished === '0') {
+        bookBasket = bookBasket.filter(b => b.finished == parseInt(finished));
+    }
+
+    const response = h.response({
+        status: 'success',
+        data: { 
+            books: bookBasket.map(book => {
+                const { id, name, publisher } = book
+                return { id, name, publisher }
+            })
+        }
+    })
+
+    response.code(200)
+    return response
+}
 
 const getBookByIdHandler = (request, h) => {
     const { id } = request.params
@@ -64,7 +85,7 @@ const editBookByIdHandler = (request, h) => {
         name, year, author, summary, publisher, pageCount, readPage, reading
     } = request.payload
 
-    if (name == null) {
+    if (name === undefined) {
         const response = h.response({
             status: 'fail',
             message: 'Gagal memperbarui buku. Mohon isi nama buku'
@@ -122,7 +143,7 @@ const addBookHandler = (request, h) => {
     const updatedAt = insertedAt
     let finished = false
 
-    if (name == null) {
+    if (name === undefined) {
         const response = h.response({
             status: 'fail',
             message: 'Gagal menambahkan buku. Mohon isi nama buku'

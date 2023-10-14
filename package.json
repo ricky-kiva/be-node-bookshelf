@@ -11,6 +11,7 @@
   "author": "Rickyslash",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.51.0",
     "nodemon": "^3.0.1"
   },
   "dependencies": {

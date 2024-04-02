@@ -143,7 +143,7 @@ const addBookHandler = (request, h) => {
     const updatedAt = insertedAt
     let finished = false
 
-    if (name === undefined) {
+    if (name === undefined || name === "") {
         const response = h.response({
             status: 'fail',
             message: 'Gagal menambahkan buku. Mohon isi nama buku'
